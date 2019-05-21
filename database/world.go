@@ -44,5 +44,7 @@ func (db *Database) FetchWorlds(ctx context.Context) (*[]World, error) {
 		}
 	}
 
+	rows.Close()
+
 	return &worlds, nil
 }
