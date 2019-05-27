@@ -7,10 +7,11 @@ import (
 )
 
 type World struct {
-	ID    string `json:"id" db:"id"`
-	Name  string `json:"name" db:"name"`
-	Title string `json:"title" db:"title"`
-	Size  int    `json:"size" db:"size"`
+	ID              string `json:"id" db:"id"`
+	Name            string `json:"name" db:"name"`
+	Title           string `json:"title" db:"title"`
+	Size            int    `json:"size" db:"size"`
+	SteamWorkshopID *int   `json:"steamWorkshopId" db:"steam_workshop_id"`
 }
 
 func (db *Database) FetchWorlds(ctx context.Context) (*[]World, error) {
@@ -19,7 +20,8 @@ func (db *Database) FetchWorlds(ctx context.Context) (*[]World, error) {
 			worlds.id,
 			worlds.name,
 			worlds.title,
-			worlds.size
+			worlds.size,
+			worlds.steam_workshop_id
 		FROM
 			worlds
 		ORDER BY
@@ -35,7 +37,7 @@ func (db *Database) FetchWorlds(ctx context.Context) (*[]World, error) {
 
 	for rows.Next() {
 		var world World
-		err = rows.Scan(&world.ID, &world.Name, &world.Title, &world.Size)
+		err = rows.Scan(&world.ID, &world.Name, &world.Title, &world.Size, &world.SteamWorkshopID)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading user from database: %q\n", err)

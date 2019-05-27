@@ -19,11 +19,17 @@ type sizeResponse struct {
 	Zoom   int `json:"zoom"`
 }
 
+type steamWorkshopResponse struct {
+	ID  int    `json:"id"`
+	URL string `json:"url"`
+}
+
 type worldResponse struct {
-	Name   string          `json:"name"`
-	Title  string          `json:"title"`
-	Size   sizeResponse    `json:"size"`
-	Layers []layerResponse `json:"layers"`
+	Name          string                 `json:"name"`
+	Title         string                 `json:"title"`
+	Size          sizeResponse           `json:"size"`
+	SteamWorkshop *steamWorkshopResponse `json:"steamWorkshop"`
+	Layers        []layerResponse        `json:"layers"`
 }
 
 func ConvertWorld(world database.World) worldResponse {
@@ -32,13 +38,20 @@ func ConvertWorld(world database.World) worldResponse {
 		Url:   fmt.Sprintf("https://maptiles.anrop.se/%s/{z}/%s_{x}_{y}.png", world.Name, world.Name),
 	}
 
+	var steamWorkshop *steamWorkshopResponse
+	if world.SteamWorkshopID != nil {
+		steamWorkshopUrl := fmt.Sprintf("https://steamcommunity.com/sharedfiles/filedetails/%d", *world.SteamWorkshopID)
+		steamWorkshop = &steamWorkshopResponse{*world.SteamWorkshopID, steamWorkshopUrl}
+	}
+
 	zoom := int(math.Ceil(math.Log2(float64(world.Size / 256))))
 
 	return worldResponse{
-		Name:   world.Name,
-		Title:  world.Title,
-		Size:   sizeResponse{world.Size, world.Size, zoom},
-		Layers: []layerResponse{topographicLayer},
+		Name:          world.Name,
+		Title:         world.Title,
+		Size:          sizeResponse{world.Size, world.Size, zoom},
+		SteamWorkshop: steamWorkshop,
+		Layers:        []layerResponse{topographicLayer},
 	}
 }
 
