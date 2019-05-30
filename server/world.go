@@ -69,6 +69,7 @@ func (s *Server) Worlds() http.HandlerFunc {
 			worldsResponse = append(worldsResponse, ConvertWorld(world))
 		}
 
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		json.NewEncoder(w).Encode(worldsResponse)
 	}
 }
