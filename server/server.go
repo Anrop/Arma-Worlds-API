@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/Anrop/Arma-Worlds-API/config"
 	"github.com/Anrop/Arma-Worlds-API/database"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -8,14 +9,16 @@ import (
 )
 
 type Server struct {
+	config   *config.Config
 	database *database.Database
 	router   *mux.Router
 }
 
-func New(database *database.Database) (*Server, error) {
+func New(config *config.Config, database *database.Database) (*Server, error) {
 	router := mux.NewRouter()
 
 	server := &Server{
+		config:   config,
 		database: database,
 		router:   router,
 	}
