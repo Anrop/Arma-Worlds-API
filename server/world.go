@@ -39,6 +39,11 @@ func ConvertWorld(config config.Config, world database.World) worldResponse {
 		Url:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.TopographicTilesBaseURL, world.Name, world.Name),
 	}
 
+	satelliteLayer := layerResponse{
+		Title: "Satellite",
+		Url:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.SatelliteTilesBaseURL, world.Name, world.Name),
+	}
+
 	var steamWorkshop *steamWorkshopResponse
 	if world.SteamWorkshopID != nil {
 		steamWorkshopUrl := fmt.Sprintf("https://steamcommunity.com/sharedfiles/filedetails/%d", *world.SteamWorkshopID)
@@ -52,7 +57,7 @@ func ConvertWorld(config config.Config, world database.World) worldResponse {
 		Title:         world.Title,
 		Size:          sizeResponse{world.Size, world.Size, zoom},
 		SteamWorkshop: steamWorkshop,
-		Layers:        []layerResponse{topographicLayer},
+		Layers:        []layerResponse{topographicLayer, satelliteLayer},
 	}
 }
 
