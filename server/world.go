@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Anrop/Arma-Worlds-API/config"
 	"github.com/Anrop/Arma-Worlds-API/database"
 	"math"
 	"net/http"
@@ -32,10 +33,10 @@ type worldResponse struct {
 	Layers        []layerResponse        `json:"layers"`
 }
 
-func ConvertWorld(world database.World) worldResponse {
+func ConvertWorld(config config.Config, world database.World) worldResponse {
 	topographicLayer := layerResponse{
 		Title: "Topographic",
-		Url:   fmt.Sprintf("https://maptiles.anrop.se/%s/{z}/%s_{x}_{y}.png", world.Name, world.Name),
+		Url:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.TopographicTilesBaseURL, world.Name, world.Name),
 	}
 
 	var steamWorkshop *steamWorkshopResponse
@@ -66,7 +67,7 @@ func (s *Server) Worlds() http.HandlerFunc {
 
 		var worldsResponse []worldResponse
 		for _, world := range *worlds {
-			worldsResponse = append(worldsResponse, ConvertWorld(world))
+			worldsResponse = append(worldsResponse, ConvertWorld(*s.config, world))
 		}
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
