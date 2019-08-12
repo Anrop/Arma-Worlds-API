@@ -8,12 +8,14 @@ import (
 	"net/http"
 )
 
+// Server object wrapping required components
 type Server struct {
 	config   *config.Config
 	database *database.Database
 	router   *mux.Router
 }
 
+// New creates a new server instance
 func New(config *config.Config, database *database.Database) (*Server, error) {
 	router := mux.NewRouter()
 
@@ -23,11 +25,12 @@ func New(config *config.Config, database *database.Database) (*Server, error) {
 		router:   router,
 	}
 
-	server.SetupRoutes()
+	server.setupRoutes()
 
 	return server, nil
 }
 
+// Serve binds the server to port
 func (s *Server) Serve(port string) error {
 	var handler http.Handler
 	handler = handlers.CORS()(s.router)

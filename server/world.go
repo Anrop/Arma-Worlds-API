@@ -11,7 +11,7 @@ import (
 
 type layerResponse struct {
 	Title string `json:"title"`
-	Url   string `json:"url"`
+	URL   string `json:"url"`
 }
 
 type sizeResponse struct {
@@ -33,21 +33,21 @@ type worldResponse struct {
 	Layers        []layerResponse        `json:"layers"`
 }
 
-func ConvertWorld(config config.Config, world database.World) worldResponse {
+func convertWorld(config config.Config, world database.World) worldResponse {
 	topographicLayer := layerResponse{
 		Title: "Topographic",
-		Url:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.TopographicTilesBaseURL, world.Name, world.Name),
+		URL:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.TopographicTilesBaseURL, world.Name, world.Name),
 	}
 
 	satelliteLayer := layerResponse{
 		Title: "Satellite",
-		Url:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.SatelliteTilesBaseURL, world.Name, world.Name),
+		URL:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.SatelliteTilesBaseURL, world.Name, world.Name),
 	}
 
 	var steamWorkshop *steamWorkshopResponse
 	if world.SteamWorkshopID != nil {
-		steamWorkshopUrl := fmt.Sprintf("https://steamcommunity.com/sharedfiles/filedetails/%d", *world.SteamWorkshopID)
-		steamWorkshop = &steamWorkshopResponse{*world.SteamWorkshopID, steamWorkshopUrl}
+		steamWorkshopURL := fmt.Sprintf("https://steamcommunity.com/sharedfiles/filedetails/%d", *world.SteamWorkshopID)
+		steamWorkshop = &steamWorkshopResponse{*world.SteamWorkshopID, steamWorkshopURL}
 	}
 
 	zoom := int(math.Ceil(math.Log2(float64(world.Size / 256))))
@@ -61,18 +61,18 @@ func ConvertWorld(config config.Config, world database.World) worldResponse {
 	}
 }
 
-func (s *Server) Worlds() http.HandlerFunc {
+func (s *Server) worlds() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		worlds, err := s.database.FetchWorlds(r.Context())
 
 		if err != nil {
-			ServerError(w, r, err)
+			s.error(w, r, err)
 			return
 		}
 
 		var worldsResponse []worldResponse
 		for _, world := range *worlds {
-			worldsResponse = append(worldsResponse, ConvertWorld(*s.config, world))
+			worldsResponse = append(worldsResponse, convertWorld(*s.config, world))
 		}
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
