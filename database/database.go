@@ -5,6 +5,7 @@ import (
 	"github.com/Anrop/Arma-Worlds-API/config"
 	// Load postgres integration for sql
 	_ "github.com/lib/pq"
+	"time"
 )
 
 // Database object wrapping the DB connection
@@ -24,6 +25,10 @@ func New(config config.Config) (database *Database, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	client.SetConnMaxLifetime(15 * time.Minute)
+	client.SetMaxOpenConns(4)
+	client.SetMaxIdleConns(2)
 
 	database = &Database{
 		client: client,
