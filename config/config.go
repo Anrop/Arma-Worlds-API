@@ -4,6 +4,7 @@ import (
 	"os"
 )
 
+// Config model
 type Config struct {
 	DatabaseURL             string
 	Port                    string
@@ -11,6 +12,7 @@ type Config struct {
 	TopographicTilesBaseURL string
 }
 
+// FromEnv creates a configuration based on environment variables
 func FromEnv() (config Config) {
 	config = Config{
 		DatabaseURL:             os.Getenv("DATABASE_URL"),

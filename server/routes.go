@@ -1,5 +1,5 @@
 package server
 
-func (s *Server) SetupRoutes() {
-	s.router.Handle("/worlds", s.Worlds())
+func (s *Server) setupRoutes() {
+	s.router.Handle("/worlds", s.worlds())
 }

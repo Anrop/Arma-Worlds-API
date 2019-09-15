@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// World database model
 type World struct {
 	ID              string `json:"id" db:"id"`
 	Name            string `json:"name" db:"name"`
@@ -14,6 +15,7 @@ type World struct {
 	SteamWorkshopID *int   `json:"steamWorkshopId" db:"steam_workshop_id"`
 }
 
+// FetchWorlds loads all worlds from database
 func (db *Database) FetchWorlds(ctx context.Context) (*[]World, error) {
 	var query = `
 		SELECT
