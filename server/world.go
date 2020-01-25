@@ -7,6 +7,7 @@ import (
 	"github.com/Anrop/Arma-Worlds-API/database"
 	"math"
 	"net/http"
+	"strings"
 )
 
 type layerResponse struct {
@@ -34,14 +35,22 @@ type worldResponse struct {
 }
 
 func convertWorld(config config.Config, world database.World) worldResponse {
-	topographicLayer := layerResponse{
-		Title: "Topographic",
-		URL:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.TopographicTilesBaseURL, world.Name, world.Name),
+	var layers []layerResponse
+
+	if len(config.TopographicTilesURL) > 0 {
+		topographicLayer := layerResponse{
+			Title: "Topographic",
+			URL:   strings.ReplaceAll(config.TopographicTilesURL, "{world}", world.Name),
+		}
+		layers = append(layers, topographicLayer)
 	}
 
-	satelliteLayer := layerResponse{
-		Title: "Satellite",
-		URL:   fmt.Sprintf("%s/%s/{z}/%s_{x}_{y}.png", config.SatelliteTilesBaseURL, world.Name, world.Name),
+	if len(config.SatelliteTilesURL) > 0 {
+		satelliteLayer := layerResponse{
+			Title: "Satellite",
+			URL:   strings.ReplaceAll(config.SatelliteTilesURL, "{world}", world.Name),
+		}
+		layers = append(layers, satelliteLayer)
 	}
 
 	var steamWorkshop *steamWorkshopResponse
@@ -57,7 +66,7 @@ func convertWorld(config config.Config, world database.World) worldResponse {
 		Title:         world.Title,
 		Size:          sizeResponse{world.Size, world.Size, zoom},
 		SteamWorkshop: steamWorkshop,
-		Layers:        []layerResponse{topographicLayer, satelliteLayer},
+		Layers:        layers,
 	}
 }
 
