@@ -6,19 +6,19 @@ import (
 
 // Config model
 type Config struct {
-	DatabaseURL             string
-	Port                    string
-	SatelliteTilesBaseURL   string
-	TopographicTilesBaseURL string
+	DatabaseURL         string
+	Port                string
+	SatelliteTilesURL   string
+	TopographicTilesURL string
 }
 
 // FromEnv creates a configuration based on environment variables
 func FromEnv() (config Config) {
 	config = Config{
-		DatabaseURL:             os.Getenv("DATABASE_URL"),
-		Port:                    os.Getenv("PORT"),
-		SatelliteTilesBaseURL:   os.Getenv("SATELLITE_TILES_BASE_URL"),
-		TopographicTilesBaseURL: os.Getenv("TOPOGRAPHIC_TILES_BASE_URL"),
+		DatabaseURL:         os.Getenv("DATABASE_URL"),
+		Port:                os.Getenv("PORT"),
+		SatelliteTilesURL:   os.Getenv("SATELLITE_TILES_URL"),
+		TopographicTilesURL: os.Getenv("TOPOGRAPHIC_TILES_URL"),
 	}
 
 	if config.Port == "" {
