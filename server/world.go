@@ -32,10 +32,12 @@ type worldResponse struct {
 	Size          sizeResponse           `json:"size"`
 	SteamWorkshop *steamWorkshopResponse `json:"steamWorkshop"`
 	Layers        []layerResponse        `json:"layers"`
+	LocationsURL  string                 `json:"locationsUrl,omitempty"`
 }
 
 func convertWorld(config config.Config, world database.World) worldResponse {
 	var layers []layerResponse
+	var locationsURL string
 
 	if len(config.TopographicTilesURL) > 0 {
 		topographicLayer := layerResponse{
@@ -53,6 +55,10 @@ func convertWorld(config config.Config, world database.World) worldResponse {
 		layers = append(layers, satelliteLayer)
 	}
 
+	if len(config.LocationsURL) > 0 {
+		locationsURL = strings.ReplaceAll(config.LocationsURL, "{world}", world.Name)
+	}
+
 	var steamWorkshop *steamWorkshopResponse
 	if world.SteamWorkshopID != nil {
 		steamWorkshopURL := fmt.Sprintf("https://steamcommunity.com/sharedfiles/filedetails/%d", *world.SteamWorkshopID)
@@ -67,6 +73,7 @@ func convertWorld(config config.Config, world database.World) worldResponse {
 		Size:          sizeResponse{world.Size, world.Size, zoom},
 		SteamWorkshop: steamWorkshop,
 		Layers:        layers,
+		LocationsURL:  locationsURL,
 	}
 }
 
